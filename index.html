@@ -90,16 +90,26 @@
       width: var(--sidebar-width);
       flex-direction: column;
       overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
       padding: 16px;
       background: var(--sidebar);
       color: var(--sidebar-ink);
       border-right: 1px solid rgba(255,255,255,.11);
       transition: transform .25s ease, background-color .2s ease;
     }
+    /* A slim, low-contrast scrollbar appears only when browser zoom makes the
+       sidebar taller than the viewport. The nav remains independently usable. */
+    .sidebar { scrollbar-width: thin; scrollbar-color: rgba(183,205,196,.28) transparent; }
+    .sidebar::-webkit-scrollbar { width: 5px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { border-radius: 99px; background: rgba(183,205,196,.28); }
     .brand {
       display: flex;
+      flex: 0 0 80px;
       align-items: flex-start;
-      width: 82px;
+      justify-content: center;
+      width: 100%;
       height: 80px;
       margin: 0 0 17px;
       overflow: hidden;
@@ -108,7 +118,7 @@
     .brand img {
       position: relative;
       top: -28px;
-      left: -24px;
+      left: 3.5px;
       display: block;
       width: 130px;
       height: 130px;
@@ -116,8 +126,9 @@
       object-fit: fill;
     }
     /* The transparent wordmark is used in light mode, so the pale arrow
-       remains visible against this deliberately darker sidebar. */
-    .nav-list { display: grid; gap: 4px; }
+       remains visible against this deliberately darker sidebar. The image
+       stays centered in the sidebar's full inner width. */
+    .nav-list { display: grid; flex: 0 0 auto; gap: 4px; }
     .nav-link {
       display: flex;
       align-items: center;
@@ -354,8 +365,10 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr);
       gap: 16px;
+      min-width: 0;
     }
-    .stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .dashboard-grid > * { min-width: 0; }
+    .stats-grid { display: grid; min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
     .stat-card { min-height: 145px; padding: 17px; }
     .stat-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .stat-head strong { font-size: 12px; }
@@ -374,8 +387,8 @@
     .stat-card:nth-child(4) .stat-icon { background: var(--blue-soft); color: #52717c; }
     .stat-number { margin: 15px 0 3px; font-size: 27px; font-weight: 780; letter-spacing: -.04em; }
     .stat-note { margin: 0; color: var(--muted); font-size: 11px; }
-    .recent-card { padding: 20px; }
-    .table-wrap { overflow-x: auto; }
+    .recent-card { min-width: 0; padding: 20px; }
+    .table-wrap { max-width: 100%; min-width: 0; overflow-x: auto; }
     .app-table { width: 100%; border-collapse: collapse; text-align: left; }
     .app-table th {
       padding: 10px 9px;
@@ -404,9 +417,6 @@
     }
     .step:first-child { padding-left: 10px; }
     .step:last-child { border-right: 0; }
-    /* The first separator is intentionally stronger, as in the reference image. */
-    .step:first-child { border-right-color: #70837d; }
-    [data-theme="dark"] .step:first-child { border-right-color: #647d74; }
     .step-check {
       display: grid;
       width: 32px;
@@ -606,6 +616,40 @@
     .tool-course small { display: block; margin-bottom: 4px; color: var(--muted); font-size: 9px; }
     .tool-course strong { display: block; font-size: 10px; line-height: 1.45; }
     .market-note { margin: 13px 0 0; color: var(--muted); font-size: 10px; line-height: 1.55; }
+    .insight-charts { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(220px, .75fr); gap: 12px; margin-bottom: 20px; }
+    .chart-card { min-width: 0; padding: 17px; }
+    .chart-title { margin: 0 0 4px; font-size: 13px; }
+    .chart-caption { margin: 0 0 12px; color: var(--muted); font-size: 9px; line-height: 1.5; }
+    .sector-chart { display: block; width: 100%; height: auto; overflow: visible; }
+    .sector-chart .chart-gridline { stroke: var(--line); stroke-width: 1; }
+    .sector-chart .chart-area { fill: color-mix(in srgb, var(--green) 14%, transparent); }
+    .sector-chart .chart-line { fill: none; stroke: var(--green); stroke-linecap: round; stroke-linejoin: round; stroke-width: 3; }
+    .sector-chart .chart-point { fill: var(--surface); stroke: var(--green); stroke-width: 2; }
+    .sector-chart text { fill: var(--muted); font-family: inherit; font-size: 9px; }
+    .sector-legend { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 6px; }
+    .sector-legend span { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 9px; }
+    .legend-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+    .sector-legend span:nth-child(2) .legend-dot { background: var(--mint); }
+    .sector-legend span:nth-child(3) .legend-dot { background: var(--amber); }
+    .sector-legend span:nth-child(4) .legend-dot { background: var(--violet); }
+    .mix-wrap { display: flex; align-items: center; gap: 14px; min-height: 125px; }
+    .mix-donut {
+      display: grid;
+      width: 108px;
+      height: 108px;
+      flex: 0 0 108px;
+      place-items: center;
+      border-radius: 50%;
+      background: conic-gradient(var(--green) 0 34%, var(--mint) 34% 61%, var(--amber) 61% 82%, var(--violet) 82% 100%);
+    }
+    .mix-donut::before { width: 67px; height: 67px; border-radius: 50%; background: var(--surface); content: ""; }
+    .mix-legend { display: grid; gap: 9px; min-width: 0; }
+    .mix-legend div { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 9px; }
+    .mix-legend .legend-dot { flex: 0 0 7px; }
+    .mix-legend div:nth-child(2) .legend-dot { background: var(--mint); }
+    .mix-legend div:nth-child(3) .legend-dot { background: var(--amber); }
+    .mix-legend div:nth-child(4) .legend-dot { background: var(--violet); }
+    .mix-footnote { margin: 6px 0 0; color: var(--muted); font-size: 8px; line-height: 1.5; }
 
     /* Career prep uses fictional exercises rather than employer test content. */
     .prep-intro {
@@ -669,7 +713,7 @@
     .opportunity-card .button { width: 100%; min-height: 34px; font-size: 10px; }
     .opportunity-card .saved { border-color: var(--green); background: var(--green-soft); color: var(--green); }
 
-    /* Fixed Shift AI preview, matching the supplied bottom-right chat panel. */
+    /* Fixed Shift AI preview, opened from its persistent robot/chat launcher. */
     .chat-widget {
       position: fixed;
       z-index: 40;
@@ -810,7 +854,7 @@
     @media (max-width: 1020px) {
       :root { --sidebar-width: 200px; }
       .content { padding-right: 24px; padding-left: 24px; }
-      .dashboard-grid { grid-template-columns: 1fr; }
+      .dashboard-grid { grid-template-columns: minmax(0, 1fr); }
       .next-steps, .events-preview { grid-column: auto; }
     }
     @media (max-width: 760px) {
@@ -836,6 +880,7 @@
       .market-summary { grid-template-columns: 1fr 1fr; }
       .market-summary > div:first-child { grid-column: 1 / -1; }
       .tool-grid { grid-template-columns: 1fr; }
+      .insight-charts { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
       .page-intro { margin-bottom: 21px; }
@@ -869,10 +914,26 @@
       .assessment-grid, .opportunity-grid, .prep-guides { grid-template-columns: 1fr; }
       .market-summary { gap: 10px; padding: 15px; }
       .market-stat { padding-left: 10px; }
+      .chart-card { padding: 14px; }
+      .mix-wrap { justify-content: flex-start; }
       .learning-filter-row { display: block; }
       .learning-filter-label { display: block; padding: 0 0 7px; }
       .chat-widget { right: 12px; bottom: 12px; width: min(316px, calc(100vw - 24px)); }
       .chat-launcher { right: 14px; bottom: 14px; }
+    }
+    @media (max-width: 390px) {
+      .topbar { padding-right: 10px; padding-left: 10px; }
+      .menu-button { width: 33px; height: 33px; }
+      .topbar-actions .button { width: 36px; min-width: 36px; padding: 0; overflow: hidden; font-size: 0; }
+      .topbar-actions .button svg { width: 16px; height: 16px; flex: 0 0 16px; }
+      .topbar-actions .icon-button { width: 32px; height: 32px; }
+      .content { padding-right: 12px; padding-left: 12px; }
+      .market-summary { grid-template-columns: 1fr 1fr; }
+      .mix-wrap { gap: 10px; }
+      .mix-donut { width: 90px; height: 90px; flex-basis: 90px; }
+      .mix-donut::before { width: 56px; height: 56px; }
+      .chat-widget { right: 8px; bottom: 8px; width: calc(100vw - 16px); max-height: calc(100dvh - 16px); }
+      .chat-launcher { right: 12px; bottom: 12px; width: 48px; height: 48px; }
     }
   </style>
 </head>
@@ -934,7 +995,7 @@
     </section>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <aside class="chat-widget" id="chat-widget" aria-label="Shift AI career assistant">
+  <aside class="chat-widget" id="chat-widget" aria-label="Shift AI career assistant" hidden>
     <header class="chat-header">
       <span class="chat-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 4.5h6A2.5 2.5 0 0 1 17.5 7v9A2.5 2.5 0 0 1 15 18.5H9A2.5 2.5 0 0 1 6.5 16V7A2.5 2.5 0 0 1 9 4.5Z"/><path d="M12 2v2.5m-2 7h.01M14 11.5h.01M9.5 15h5"/></svg></span>
       <span class="chat-title"><strong>Shift AI</strong><small>Career assistant preview</small></span>
@@ -948,7 +1009,7 @@
     </form>
     <p class="chat-note">Preview only—messages stay in this browser and are not sent to an AI service.</p>
   </aside>
-  <button class="chat-launcher" id="open-chat" type="button" aria-label="Open Shift AI" title="Open Shift AI" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 4.5h6A2.5 2.5 0 0 1 17.5 7v9A2.5 2.5 0 0 1 15 18.5H9A2.5 2.5 0 0 1 6.5 16V7A2.5 2.5 0 0 1 9 4.5Z"/><path d="M12 2v2.5m-2 7h.01M14 11.5h.01M9.5 15h5"/></svg></button>
+  <button class="chat-launcher" id="open-chat" type="button" aria-label="Open Shift AI" title="Open Shift AI"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 4.5h6A2.5 2.5 0 0 1 17.5 7v9A2.5 2.5 0 0 1 15 18.5H9A2.5 2.5 0 0 1 6.5 16V7A2.5 2.5 0 0 1 9 4.5Z"/><path d="M12 2v2.5m-2 7h.01M14 11.5h.01M9.5 15h5"/></svg></button>
 
   <script>
     /* -----------------------------
@@ -991,6 +1052,7 @@
         roles: "AI, analytics and digital roles",
         sectors: "Energy · Finance · Aviation · Public services",
         samples: 42,
+        sectorMix: [34, 27, 21, 18],
         tools: [
           { name: "Python", category: "Programming & machine learning", mentions: 36, course: "Python for Everybody", topic: "Python" },
           { name: "SQL", category: "Data querying", mentions: 32, course: "Google Data Analytics Professional Certificate", topic: "Data analytics" },
@@ -1003,6 +1065,7 @@
         roles: "Software, cloud and platform roles",
         sectors: "Technology · Telecom · Aviation · Energy",
         samples: 38,
+        sectorMix: [18, 30, 24, 28],
         tools: [
           { name: "Python", category: "Programming & automation", mentions: 31, course: "Python for Everybody", topic: "Python" },
           { name: "JavaScript", category: "Web development", mentions: 29, course: "Full-Stack Web Development", topic: "Software" },
@@ -1015,6 +1078,7 @@
         roles: "Finance, consulting and business roles",
         sectors: "Banking · Investment · Energy · Consulting",
         samples: 35,
+        sectorMix: [24, 34, 17, 25],
         tools: [
           { name: "Excel", category: "Financial modelling & reporting", mentions: 32, course: "Excel Skills for Business", topic: "Excel" },
           { name: "Power BI", category: "Business intelligence", mentions: 25, course: "Microsoft Power BI Data Analyst", topic: "Data analytics" },
@@ -1027,6 +1091,7 @@
         roles: "Engineering, operations and sustainability roles",
         sectors: "Energy · Infrastructure · Manufacturing · Environment",
         samples: 33,
+        sectorMix: [42, 18, 25, 15],
         tools: [
           { name: "AutoCAD", category: "Computer-aided design", mentions: 26, course: "AutoCAD Essential Training", topic: "Engineering" },
           { name: "Excel", category: "Operations & reporting", mentions: 24, course: "Excel Skills for Business", topic: "Excel" },
@@ -1039,6 +1104,7 @@
         roles: "Aviation, logistics and supply-chain roles",
         sectors: "Air transport · Logistics · Tourism · Trade",
         samples: 29,
+        sectorMix: [18, 20, 42, 20],
         tools: [
           { name: "Excel", category: "Planning & operations", mentions: 25, course: "Excel Skills for Business", topic: "Excel" },
           { name: "Power BI", category: "Operational dashboards", mentions: 21, course: "Microsoft Power BI Data Analyst", topic: "Data analytics" },
@@ -1230,6 +1296,24 @@
     function renderInsights() {
       const market = marketProfiles[marketField];
       const fieldOptions = Object.keys(marketProfiles).map(field => `<option value="${escapeHTML(field)}" ${marketField === field ? "selected" : ""}>${escapeHTML(field)}</option>`).join("");
+      const maxMentions = Math.max(...market.tools.map(tool => tool.mentions));
+      const chartPoints = market.tools.map((tool, index) => {
+        const x = 38 + index * 72;
+        const y = 110 - Math.round((tool.mentions / maxMentions) * 78);
+        return { x, y, label: tool.name.length > 10 ? `${tool.name.slice(0, 9)}…` : tool.name };
+      });
+      const linePoints = chartPoints.map(point => `${point.x},${point.y}`).join(" ");
+      const areaPoints = `38,120 ${linePoints} 326,120`;
+      const sectorLabels = ["Energy", "Finance", "Aviation", "Public / other"];
+      const sectorColors = ["var(--green)", "var(--mint)", "var(--amber)", "var(--violet)"];
+      let sectorOffset = 0;
+      const donutGradient = market.sectorMix.map((value, index) => {
+        const start = sectorOffset;
+        sectorOffset += value;
+        return `${sectorColors[index]} ${start}% ${sectorOffset}%`;
+      }).join(", ");
+      const sectorLegend = sectorLabels.map((label, index) => `<div><span class="legend-dot"></span>${label} · ${market.sectorMix[index]}%</div>`).join("");
+      const chartDots = chartPoints.map(point => `<circle class="chart-point" cx="${point.x}" cy="${point.y}" r="4"><title>${escapeHTML(point.label)}</title></circle><text x="${point.x}" y="143" text-anchor="middle">${escapeHTML(point.label)}</text>`).join("");
       const tools = market.tools.map(tool => `<article class="card tool-card">
         <div class="tool-card-head"><div><h3>${escapeHTML(tool.name)}</h3><span class="tool-category">${escapeHTML(tool.category)}</span></div><strong class="tool-count">${tool.mentions}<small>sample mentions</small></strong></div>
         <div class="tool-bar" aria-label="${tool.mentions} sample mentions"><span style="width:${Math.min(tool.mentions, 100)}%"></span></div>
@@ -1245,6 +1329,26 @@
           <div><h2>${escapeHTML(market.roles)}</h2><p>Qatar sector lens: ${escapeHTML(market.sectors)}</p></div>
           <div class="market-stat"><strong>${market.samples}</strong><span>simulated vacancy descriptions</span></div>
           <div class="market-stat"><strong>${market.tools.length}</strong><span>tools &amp; software examples</span></div>
+        </section>
+        <section class="insight-charts" aria-label="Visual Qatar market insights">
+          <article class="card chart-card">
+            <h2 class="chart-title">Top skill mentions</h2>
+            <p class="chart-caption">Relative mentions across the selected Qatar career-path sample.</p>
+            <svg class="sector-chart" viewBox="0 0 360 156" role="img" aria-label="Line chart comparing sample mentions across the top tools">
+              <line class="chart-gridline" x1="30" y1="32" x2="340" y2="32"></line>
+              <line class="chart-gridline" x1="30" y1="72" x2="340" y2="72"></line>
+              <line class="chart-gridline" x1="30" y1="112" x2="340" y2="112"></line>
+              <text x="25" y="35" text-anchor="end">${maxMentions}</text><text x="25" y="75" text-anchor="end">${Math.round(maxMentions / 2)}</text><text x="25" y="115" text-anchor="end">0</text>
+              <polygon class="chart-area" points="${areaPoints}"></polygon>
+              <polyline class="chart-line" points="${linePoints}"></polyline>${chartDots}
+            </svg>
+          </article>
+          <article class="card chart-card">
+            <h2 class="chart-title">Qatar sector mix</h2>
+            <p class="chart-caption">Illustrative distribution for this role-family sample.</p>
+            <div class="mix-wrap"><div class="mix-donut" role="img" aria-label="Illustrative sector distribution: ${sectorLabels.map((label, index) => `${label} ${market.sectorMix[index]} percent`).join(", ")}" style="background:conic-gradient(${donutGradient})"></div><div class="mix-legend">${sectorLegend}</div></div>
+            <p class="mix-footnote">Sector shares are mock presentation data, not live vacancy counts.</p>
+          </article>
         </section>
         <div class="section-heading"><h2>Tools to prioritize</h2><span class="badge green">Most-mentioned first</span></div>
         <section class="tool-grid">${tools}</section>
